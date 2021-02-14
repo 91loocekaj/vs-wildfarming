@@ -1,0 +1,9 @@
+{
+	code: "mushroomspawn",
+	sealHours: 216,
+	ingredients: [
+		{ type: "item", code: "game:rot",  quantity: 1, consumeQuantity: 1 },
+		{ type: "block", code: "game:mushroom-*-normal-free", name: "mushroom", quantity: 1}
+	],
+	output: { type: "item", code: "wildfarming:mushroomspawn-{mushroom}", stackSize: 1 }
+}

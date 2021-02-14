@@ -1,0 +1,26 @@
+[{
+	ingredientPattern: "K,H",
+	enabled: true,
+	shapeless: true,
+	ingredients: {
+		"K": { type: "block", code: "game:pan-wooden", returnedStack: { type: "block", code: "game:pan-wooden" } },
+		"H": { type: "item", code: "game:grain-*", quantity: 2, name: "type", allowedVariants: ["flax", "rice", "rye", "spelt"]},
+	},
+	name: "grainseeds",
+	width: 1,
+	height: 2,
+	output: { type: "item", code: "game:seeds-{type}", quantity: 1}
+},
+{
+	ingredientPattern: "K,H",
+	enabled: true,
+	shapeless: true,
+	ingredients: {
+		"K": { type: "item", code: "game:knife-*", isTool: true },
+		"H": { type: "item", code: "game:vegetable-*", quantity: 2, name: "type", allowedVariants: ["carrot", "cabbage", "onion", "turnip", "parsnip"] },
+	},
+	name: "vegetableseeds",
+	width: 1,
+	height: 2,
+	output: { type: "item", code: "game:seeds-{type}", quantity: 1}
+}]

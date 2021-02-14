@@ -1,0 +1,13 @@
+{
+	code: "wildseeds",
+	class: "wildseed",
+	creativeinventory: { "general": ["*"] },
+	maxstacksize : 64,
+	variantgroups: [
+		{ code: "type", states: ["smallberrybush"]},
+		{ code: "berry", states: ["blueberry", "cranberry"] },
+		{ code: "state", states: ["empty"] }
+	],
+
+	texture: {base: "item/wildseeds", overlays: ["item/wildseeds-overlay-bush"]}
+}

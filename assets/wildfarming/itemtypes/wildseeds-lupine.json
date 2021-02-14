@@ -1,0 +1,13 @@
+{
+	code: "wildseeds",
+	class: "wildseed",
+	creativeinventory: { "general": ["*-free"] },
+	maxstacksize : 64,
+	variantgroups: [
+		{ code: "type", states: ["flower-lupine"]},
+		{ code: "color", states: ["blue", "orange", "purple", "red", "white"] },
+		{ code: "cover", states: ["free", "snow"] }
+	],
+
+	texture: {base: "item/wildseeds", overlays: ["item/wildseeds-overlay-lupine"]}
+}

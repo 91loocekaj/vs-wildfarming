@@ -1,0 +1,11 @@
+{
+  "type": "code",
+  "modid": "wildfarming",
+  "name": "Wild Farming",
+  "description" : "Cultivate flowers, herbs, mushrooms, and bushes!",
+  "author": "jakecool19",
+  "version": "0.8",
+  "dependency": {
+    "game": ""
+  }
+}

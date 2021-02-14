@@ -1,0 +1,12 @@
+{
+	code: "wildseeds",
+	class: "wildseed",
+	creativeinventory: { "general": ["*"] },
+	maxstacksize : 64,
+	variantgroups: [
+		{ code: "type", states: ["flower-rafflesia"]},
+		{ code: "color", states: ["brown", "red"] }
+	],
+
+	texture: {base: "item/wildseeds", overlays: ["item/wildseeds-overlay-exotic"]}
+}

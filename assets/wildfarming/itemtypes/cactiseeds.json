@@ -1,0 +1,11 @@
+{
+	code: "wildseeds",
+	class: "wildseed",
+	creativeinventory: { "general": ["*"] },
+	maxstacksize : 64,
+	variantgroups: [
+		{ code: "type", states: ["saguarocactus-topempty", "barrelcactus-normal"]}
+	],
+
+	texture: {base: "item/wildseeds", overlays: ["item/wildseeds-overlay-exotic"]}
+}

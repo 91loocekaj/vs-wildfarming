@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{05C0F2A4-EF31-4FD6-A5E4-5D4FBA373CDC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>wildfarming</RootNamespace>
+    <AssemblyName>wildfarming</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(ProjectDir)\bin</OutputPath>
+    <IntermediateOutputPath>..\..\obj\Debug\wildfarming\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(ProjectDir)\bin</OutputPath>
+    <IntermediateOutputPath>..\..\obj\Release\wildfarming\</IntermediateOutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\jakec\AppData\Roaming\Vintagestory\Lib\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="VintagestoryAPI">
+      <HintPath>$(AppData)\Vintagestory\VintagestoryAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSSurvivalMod">
+      <HintPath>$(AppData)\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSEssentials">
+      <HintPath>$(AppData)\Vintagestory\Mods\VSEssentials.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSCreativeMod">
+      <HintPath>$(AppData)\Vintagestory\Mods\VSCreativeMod.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(AppData)\Vintagestory\Lib\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\wildfarming\blocktypes\wildplant-bigberrybush.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant-croton.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant-herb.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant-lupine.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant-rafflesia.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant-smallberrybush.json" />
+    <Content Include="assets\wildfarming\blocktypes\wildplant.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-bigberrybush.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-croton.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-herb.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-lupine.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-rafflesia.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds-smallberrybush.json" />
+    <Content Include="assets\wildfarming\itemtypes\wildseeds.json" />
+    <Content Include="assets\wildfarming\lang\en.json" />
+    <Content Include="assets\wildfarming\recipes\grid\flowerseeds.json" />
+    <Content Include="assets\wildfarming\recipes\grid\fruitseeds.json" />
+    <Content Include="assets\wildfarming\recipes\grid\herbseeds.json" />
+    <Content Include="assets\wildfarming\textures\block\wildplant.png" />
+    <Content Include="assets\wildfarming\textures\item\wildseeds-overlay-flower.png" />
+    <Content Include="assets\wildfarming\textures\item\wildseeds-overlay-herb.png" />
+    <Content Include="assets\wildfarming\textures\item\wildseeds.png" />
+    <Content Include="modinfo.json" />
+    <Compile Include="src\Block\BlockEnhancedVines.cs" />
+    <Compile Include="src\BlockEntity\BESeaweed.cs" />
+    <Compile Include="src\BlockEntity\BEVines.cs" />
+    <Compile Include="src\Item\ItemMushroomSpawn.cs" />
+    <Compile Include="src\WF.cs" />
+    <Compile Include="src\BlockEntity\WildPlant.cs" />
+    <Compile Include="src\Item\WildSeed.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+copy "$(TargetPath)" "$(ProjectDir)" 
+copy "$(TargetDir)\$(TargetName).pdb" "$(ProjectDir)" 
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

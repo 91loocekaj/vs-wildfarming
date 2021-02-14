@@ -1,0 +1,28 @@
+[
+  {
+  	ingredientPattern: "K,H",
+  	enabled: true,
+  	shapeless: true,
+  	ingredients: {
+  		"K": { type: "item", code: "game:knife-*", isTool: true },
+  		"H": { type: "item", code: "game:fruit-saguaro", quantity: 1},
+  	},
+  	name: "saguaroseeds",
+  	width: 1,
+  	height: 2,
+  	output: { type: "item", code: "wildfarming:wildseeds-saguarocactus-topempty", quantity: 2}
+  },
+  {
+  	ingredientPattern: "K,H",
+  	enabled: true,
+  	shapeless: true,
+  	ingredients: {
+  		"K": { type: "item", code: "game:knife-*", isTool: true },
+  		"H": { type: "block", code: "game:barrelcactus-normal" },
+  	},
+  	name: "barrelseeds",
+  	width: 1,
+  	height: 2,
+  	output: { type: "item", code: "wildfarming:wildseeds-barrelcactus-normal", quantity: 3}
+  },
+]
