@@ -20,6 +20,8 @@ namespace WildFarming
             api.RegisterBlockEntityClass("BEVines", typeof(BEVines));
             api.RegisterBlockEntityClass("BESeaweed", typeof(BESeaweed));
 
+            api.RegisterBlockBehaviorClass("Score", typeof(BlockBehaviorScore));
+
             harmony = new Harmony("com.jakecool19.wildfarming.lootvessel");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }

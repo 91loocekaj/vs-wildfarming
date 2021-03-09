@@ -129,4 +129,6 @@
 
 	"block-wildplant-barrelcactus-normal" : "Growing Barrel Cactus",
 	"block-wildplant-saguarocactus-topempty" : "Growing Dwarf Saguaro Cactus",
+
+	"blockhelp-score" : "Cut Tree",
 }

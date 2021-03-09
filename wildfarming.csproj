@@ -89,6 +89,7 @@
     <Content Include="assets\wildfarming\textures\item\wildseeds-overlay-herb.png" />
     <Content Include="assets\wildfarming\textures\item\wildseeds.png" />
     <Content Include="modinfo.json" />
+    <Compile Include="src\Block Behavior\BlockBehaviorScore.cs" />
     <Compile Include="src\Block\BlockEnhancedVines.cs" />
     <Compile Include="src\BlockEntity\BESeaweed.cs" />
     <Compile Include="src\BlockEntity\BEVines.cs" />
