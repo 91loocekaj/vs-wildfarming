@@ -16,7 +16,7 @@
 	enabled: true,
 	shapeless: true,
 	ingredients: {
-		"K": { type: "item", code: "game:knife-*", isTool: true },
+		"K": { type: "item", code: "game:shears-*", isTool: true },
 		"H": { type: "item", code: "game:vegetable-*", quantity: 2, name: "type", allowedVariants: ["carrot", "cabbage", "onion", "turnip", "parsnip"] },
 	},
 	name: "vegetableseeds",

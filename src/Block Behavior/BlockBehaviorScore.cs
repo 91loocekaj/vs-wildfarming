@@ -78,7 +78,7 @@ namespace WildFarming
                 return false;
             }
 
-            if (!block.Code.Path.Contains("log-grown-pine-")) return false;
+            if (!block.Code.Path.Contains("log-grown-pine-") || byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack?.Collectible?.Tool != EnumTool.Knife) return false;
 
             handling = EnumHandling.PreventDefault;
 
