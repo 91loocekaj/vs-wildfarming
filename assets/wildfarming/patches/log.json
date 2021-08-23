@@ -8,6 +8,7 @@
           "scoreTime": 3
         }
       },
-    "file": "game:blocktypes/wood/log.json"
+    "file": "game:blocktypes/wood/woodtyped/log.json",
+    "condition": { "when": "WFlogScoringEnabled", "isValue": "true" }
   }
 ]

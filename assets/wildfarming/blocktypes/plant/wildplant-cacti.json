@@ -35,7 +35,7 @@
 	climateColorMap: "climatePlantTint",
 	seasonColorMap: "seasonalFoliage",
 	blockmaterial: "Plant",
-	shape: { base: "game:block/basic/shortcross" },
+	shape: { base: "game:block/basic/cross-short" },
 	renderpass: "OpaqueNoCull",
 	lightAbsorption: 0,
 	sideopaque: {

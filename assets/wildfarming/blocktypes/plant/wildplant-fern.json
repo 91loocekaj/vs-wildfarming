@@ -2,52 +2,32 @@
 	code: "wildplant",
 	entityClass: "WildPlant",
 	variantgroups: [
-		{ code: "type", states: ["herb"]},
-		{ code: "herb", loadFromProperties: "block/herb"}
+		{ code: "plant", states: ["fern"]},
+		{ code: "type", states: ["cinnamonfern", "deerfern", "eaglefern", "hartstongue"] }
 	],
 	drawtype: "JSON",
 	replaceable: 5000,
 	behaviors: [{name: "Unstable"}],
 	attributes: {
-		"hoursByType" : {
-			"*-basil": 120,
-			"*-chamomile": 144,
-			"*-cilantro": 192,
-			"*-lavender": 192,
-			"*-marjoram": 96,
-			"*-mint": 192,
-			"*-saffron": 144,
-			"*-sage": 384,
-			"*-thyme": 120,
-		},
-		"minTempByType" : {
-			"*-basil": 15,
-			"*-chamomile": 0,
-			"*-cilantro": -2,
-			"*-lavender": -1,
-			"*-marjoram": 1,
-			"*-mint": -10,
-			"*-saffron": -5,
-			"*-sage": -10,
-			"*-thyme": -10,
-		},
-    "maxTempByType" : {
-			"*-basil": 37,
-			"*-chamomile": 42,
-			"*-cilantro": 34,
-			"*-lavender": 37,
-			"*-marjoram": 34,
-			"*-mint": 27,
-			"*-saffron": 40,
-			"*-sage": 30,
-			"*-thyme": 42,
-		},
 		handbook: {
 			exclude: true
-		}
+		},
+		"hours": 120,
+		"minTempByType": {
+			"*-eaglefern": -12,
+			"*-cinnamonfern": -3,
+			"*-deerfern": 2,
+			"*-hartstongue": 20,
+		},
+		"maxTempByType": {
+			"*-eaglefern": 10,
+			"*-cinnamonfern": 15,
+			"*-deerfern": 20,
+			"*-hartstongue": 40,
+		},
 	},
 	drops: [
-		{ type: "item", code: "wildfarming:wildseeds-{type}-{herb}" }
+		{ type: "item", code: "wildfarming:wildseeds-{plant}-{type}" }
 	],
 	frostable: true,
 	combustibleProps: {

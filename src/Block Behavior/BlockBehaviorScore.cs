@@ -2,6 +2,7 @@
 using Vintagestory.API;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
 namespace WildFarming
@@ -109,13 +110,17 @@ namespace WildFarming
 
             if (secondsUsed > scoreTime - 0.05f && world.Side == EnumAppSide.Server)
             {
-
-                if (scoredBlock != null)
+                ItemStack knife = byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
+                if (knife != null && knife.Collectible.Tool == EnumTool.Knife)
                 {
-                    world.BlockAccessor.SetBlock(scoredBlock.BlockId, blockSel.Position);
-                }
+                    knife.Collectible.DamageItem(world, byPlayer.Entity, byPlayer.InventoryManager.ActiveHotbarSlot, 15);
+                    if (scoredBlock != null)
+                    {
+                        world.BlockAccessor.SetBlock(scoredBlock.BlockId, blockSel.Position);
+                    }
 
-                world.PlaySoundAt(scoringSound, blockSel.Position.X, blockSel.Position.Y, blockSel.Position.Z, byPlayer);
+                    world.PlaySoundAt(scoringSound, blockSel.Position.X, blockSel.Position.Y, blockSel.Position.Z, byPlayer);
+                }
             }
         }
 

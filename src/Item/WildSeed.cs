@@ -31,7 +31,7 @@ namespace WildFarming
             // Checking to see if we can place the plant. If not this stops the method
             if (!byEntity.World.Claims.TryAccess(byPlayer, onPos, EnumBlockAccessFlags.BuildOrBreak)) return;
             if (!ground.SideSolid[blockSel.Face.Index]) return;
-            if (taken.BlockId != 0) return;
+            if (taken.Replaceable < 9501) return;
             if (ground.Fertility <= 0) return;
 
 

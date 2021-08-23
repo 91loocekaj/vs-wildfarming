@@ -112,6 +112,14 @@
       { "type": "item", "code": "game:seeds-soybean", "chance":  {"avg": 0.0005}},
       { "type": "item", "code": "game:seeds-pumpkin", "chance":  {"avg": 0.0005}}
     ],
-    "file": "game:blocktypes/wood/generic/pan.json"
+    "file": "game:blocktypes/wood/generic/pan.json",
+    "condition": { "when": "WFseedPanningEnabled", "isValue": "true" }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/pannable",
+    "value": true,
+    "file": "game:blocktypes/soil/muddygravel.json",
+    "condition": { "when": "WFseedPanningEnabled", "isValue": "true" }
   }
 ]

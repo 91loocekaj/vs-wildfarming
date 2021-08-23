@@ -1,0 +1,113 @@
+[
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cactiseeds.json",
+    "condition": { "when": "WFcactiEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/1/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cactiseeds.json",
+    "condition": { "when": "WFcactiEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cropseeds.json",
+    "condition": { "when": "WFcropsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/1/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cropseeds.json",
+    "condition": { "when": "WFcropsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/2/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cropseeds.json",
+    "condition": { "when": "WFcropsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/3/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/cropseeds.json",
+    "condition": { "when": "WFcropsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/2/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/fruitseeds.json",
+    "condition": { "when": "WFcropsEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/fruitseeds.json",
+    "condition": { "when": "WFbushesEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/1/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/fruitseeds.json",
+    "condition": { "when": "WFbushesEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/flowerseeds.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/1/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/flowerseeds.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/reedroots.json",
+    "condition": { "when": "WFreedsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/1/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/reedroots.json",
+    "condition": { "when": "WFreedsEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/0/enabled",
+    "value": false,
+    "file": "wildfarming:recipes/grid/vinetrimming.json",
+    "condition": { "when": "WFvinesEnabled", "isValue": "false" }
+  },
+
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "game:recipes/grid/mushroomspawn.json",
+    "condition": { "when": "WFmushroomsEnabled", "isValue": "false" }
+  },
+]

@@ -1,13 +1,45 @@
 ﻿using HarmonyLib;
 using System.Reflection;
 using Vintagestory.API.Common;
-using Vintagestory.GameContent;
+using Vintagestory.ServerMods;
 
 namespace WildFarming
 {
     public class WildFarming : ModSystem
     {
         private Harmony harmony;
+
+        public override void StartPre(ICoreAPI api)
+        {
+            base.StartPre(api);
+
+            try
+            {
+                BotanyConfig FromDisk;
+                if ((FromDisk = api.LoadModConfig<BotanyConfig>("WildFarmingConfig.json")) == null)
+                {
+                    api.StoreModConfig<BotanyConfig>(BotanyConfig.Loaded, "WildFarmingConfig.json");
+                }
+                else BotanyConfig.Loaded = FromDisk;
+            }
+            catch
+            {
+                api.StoreModConfig<BotanyConfig>(BotanyConfig.Loaded, "WildFarmingConfig.json");
+            }
+
+            api.World.Config.SetBool("WFflowersEnabled", BotanyConfig.Loaded.FlowersEnabled);
+            api.World.Config.SetBool("WFseedPanningEnabled", BotanyConfig.Loaded.SeedPanningEnabled);
+            api.World.Config.SetBool("WFcropsEnabled", BotanyConfig.Loaded.CropSeedsEnabled);
+            api.World.Config.SetBool("WFbushesEnabled", BotanyConfig.Loaded.BushSeedsEnabled);
+            api.World.Config.SetBool("WFcactiEnabled", BotanyConfig.Loaded.CactiSeedsEnabled);
+            api.World.Config.SetBool("WFmushroomsEnabled", BotanyConfig.Loaded.MushroomSpawnEnabled);
+            api.World.Config.SetBool("WFvinesEnabled", BotanyConfig.Loaded.VineGrowthEnabled);
+            api.World.Config.SetBool("WFlogScoringEnabled", BotanyConfig.Loaded.LogScoringEnabled);
+            api.World.Config.SetBool("WFreedsEnabled", BotanyConfig.Loaded.ReedCloningEnabled);
+            api.World.Config.SetBool("WFseaweedEnabled", BotanyConfig.Loaded.SeaweedGrowthEnabled);
+
+        }
+
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
@@ -15,10 +47,14 @@ namespace WildFarming
             api.RegisterItemClass("ItemMushroomSpawn", typeof(ItemMushroomSpawn));
 
             api.RegisterBlockClass("BlockEnhancedVines", typeof(BlockEnhancedVines));
+            api.RegisterBlockClass("BlockTrunk", typeof(BlockTrunk));
+            api.RegisterBlockClass("BlockLivingLogSection", typeof(BlockLivingLogSection));
 
             api.RegisterBlockEntityClass("WildPlant", typeof(WildPlantBlockEntity));
             api.RegisterBlockEntityClass("BEVines", typeof(BEVines));
             api.RegisterBlockEntityClass("BESeaweed", typeof(BESeaweed));
+            api.RegisterBlockEntityClass("RegenSapling", typeof(BlockEntityRegenSapling));
+            api.RegisterBlockEntityClass("TreeTrunk", typeof(BlockEntityTrunk));
 
             api.RegisterBlockBehaviorClass("Score", typeof(BlockBehaviorScore));
 
@@ -33,52 +69,47 @@ namespace WildFarming
         }
     }
 
-    [HarmonyPatch(typeof(BlockLootVessel))]
-    [HarmonyPatch("BlockLootVessel", MethodType.Constructor)]
-    class LootVesselPatch
+    public class BotanyConfig
     {
-        [HarmonyPrepare]
-        static bool Prepare()
-        {
-            return true;
-        }
+        public static BotanyConfig Loaded { get; set; } = new BotanyConfig();
 
-        [HarmonyPostfix]
-        static void Postfix()
-        {
-            BlockLootVessel.lootLists["seed"] = LootList.Create(2,
-                LootItem.Item(1f, 5, 7, "seeds-carrot", "seeds-onion", "seeds-spelt", "seeds-turnip", "seeds-rice", "seeds-rye", "seeds-soybean", "seeds-pumpkin", "seeds-cabbage"),
-                LootItem.Item(1f, 5, 7, "wildfarming:wildseeds-herb-basil", "wildfarming:wildseeds-herb-thyme", "wildfarming:wildseeds-herb-sage", "wildfarming:wildseeds-herb-chamomile", "wildfarming:wildseeds-herb-mint", "wildfarming:wildseeds-herb-saffron", "wildfarming:wildseeds-herb-marjoram", "wildfarming:wildseeds-herb-cilantro", "wildfarming:wildseeds-herb-lavender")
-            );
-            BlockLootVessel.lootLists["food"] = LootList.Create(1,
-                LootItem.Item(1.5f, 8, 15, "grain-spelt", "grain-rice", "grain-flax", "grain-rye"),
-                LootItem.Item(1, 8, 15, "redmeat-cured", "bushmeat-cured", "poultry-cured", "pickledlegume-soybean"),
-                LootItem.Item(1, 8, 15, "pickledvegetable-carrot", "pickledvegetable-parsnip", "pickledvegetable-turnip", "pickledvegetable-pumpkin", "pickledvegetable-onion", "pickledvegetable-cabbage"),
-                LootItem.Item(0.1f, 1, 1, "resonancearchive-1", "resonancearchive-2", "resonancearchive-3", "resonancearchive-4", "resonancearchive-5", "resonancearchive-6", "resonancearchive-7", "resonancearchive-8", "resonancearchive-9")
-            );
-            BlockLootVessel.lootLists["forage"] = LootList.Create(2.5f,
-                LootItem.Item(1, 2, 6, "flint"),
-                LootItem.Item(1, 3, 9, "stick"),
-                LootItem.Item(1, 3, 16, "drygrass"),
-                LootItem.Item(1, 3, 24, "stone-chalk"),
-                LootItem.Item(1, 3, 24, "clay-blue", "clay-fire"),
-                LootItem.Item(1, 3, 24, "cattailtops"),
-                LootItem.Item(1, 1, 4, "poultice-linen-horsetail"),
-                LootItem.Item(0.5f, 1, 12, "flaxfibers"),
-                LootItem.Item(0.3f, 1, 3, "honeycomb"),
-                LootItem.Item(1f, 2, 6, "herbbundle-basil", "herbbundle-thyme", "herbbundle-sage", "herbbundle-saffron", "herbbundle-marjoram", "herbbundle-lavender", "herbbundle-chamomile", "herbbundle-cilantro", "herbbundle-mint"),
-                LootItem.Item(0.3f, 2, 6, "beenade-closed")
-            );
-            BlockLootVessel.lootLists["farming"] = LootList.Create(2.5f,
-                LootItem.Item(0.5f, 5, 7, "seeds-carrot", "seeds-onion", "seeds-spelt", "seeds-turnip", "seeds-rice", "seeds-rye", "seeds-soybean", "seeds-pumpkin", "seeds-cabbage"),
-                LootItem.Item(0.5f, 5, 7, "wildfarming:wildseeds-herb-basil", "wildfarming:wildseeds-herb-thyme", "wildfarming:wildseeds-herb-sage", "wildfarming:wildseeds-herb-chamomile", "wildfarming:wildseeds-herb-mint", "wildfarming:wildseeds-herb-saffron", "wildfarming:wildseeds-herb-marjoram", "wildfarming:wildseeds-herb-cilantro", "wildfarming:wildseeds-herb-lavender"),
-                LootItem.Item(0.75f, 3, 10, "feather"),
-                LootItem.Item(0.75f, 2, 10, "flaxfibers"),
-                LootItem.Item(0.35f, 2, 10, "flaxtwine"),
-                LootItem.Item(0.5f, 2, 6, "herbbundle-basil", "herbbundle-thyme", "herbbundle-sage", "herbbundle-saffron", "herbbundle-marjoram", "herbbundle-lavender", "herbbundle-chamomile", "herbbundle-cilantro", "herbbundle-mint"),
-                LootItem.Item(0.75f, 5, 10, "cattailtops"),
-                LootItem.Item(0.1f, 1, 1, "scythe-copper", "scythe-tinbronze")
-            );
-        }
+        //Tree settings
+        public int MaxTreeGrowthStages { get; set; } = 4;
+
+        public float SaplingToTreeSize { get; set; } = 0.6f;
+
+        public float TreeSizePerGrowthStage { get; set; } = 0.125f;
+
+        public float TreeRevertGrowthTempThreshold { get; set; } = 5f;
+
+        public float TreeRegenMultiplier { get; set; } = 1f;
+
+        //Wild Plants settings
+        public bool HarshWildPlants { get; set; } = true;
+
+        //Enable/Disable settings
+        public bool FlowersEnabled { get; set; } = true;
+
+        public bool SeedPanningEnabled { get; set; } = true;
+
+        public bool CropSeedsEnabled { get; set; } = true;
+
+        public bool BushSeedsEnabled { get; set; } = true;
+
+        public bool CactiSeedsEnabled { get; set; } = true;
+
+        public bool MushroomSpawnEnabled { get; set; } = true;
+
+        public bool VineGrowthEnabled { get; set; } = true;
+
+        public bool LogScoringEnabled { get; set; } = true;
+
+        public bool ReedCloningEnabled { get; set; } = true;
+
+        public bool LivingTreesEnabled { get; set; } = true;
+
+        public bool HarshSaplingsEnabled { get; set; } = true;
+
+        public bool SeaweedGrowthEnabled { get; set; } = true;
     }
 }

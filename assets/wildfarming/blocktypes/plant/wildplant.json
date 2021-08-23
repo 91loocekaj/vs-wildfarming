@@ -25,6 +25,8 @@
 			"*-cowparsley-*": 192,
 			"*-californiapoppy-*": 168,
 			"*-lilyofthevalley-*": 192,
+			"*-woad-*": 192,
+			"*-cornflower-*": 192,
 		},
 		"minTempByType": {
 			"*-catmint-*": -5,
@@ -38,6 +40,8 @@
 			"*-cowparsley-*": -8,
 			"*-californiapoppy-*": 12,
 			"*-lilyofthevalley-*": -8,
+			"*-woad-*": -7,
+			"*-cornflower-*": -3,
 		},
 		"maxTempByType": {
 			"*-catmint-*": 29,
@@ -51,6 +55,8 @@
 			"*-cowparsley-*": 30,
 			"*-californiapoppy-*": 35,
 			"*-lilyofthevalley-*": 23,
+			"*-woad-*": 25,
+			"*-cornflower-*": 27,
 		},
 	},
 	drops: [
@@ -64,7 +70,7 @@
 	climateColorMap: "climatePlantTint",
 	seasonColorMap: "seasonalFoliage",
 	blockmaterial: "Plant",
-	shape: { base: "game:block/basic/shortcross" },
+	shape: { base: "game:block/basic/cross-short" },
 	renderpass: "OpaqueNoCull",
 	lightAbsorption: 0,
 	sideopaque: {

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>wildfarming</RootNamespace>
     <AssemblyName>wildfarming</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -90,10 +91,15 @@
     <Content Include="assets\wildfarming\textures\item\wildseeds.png" />
     <Content Include="modinfo.json" />
     <Compile Include="src\Block Behavior\BlockBehaviorScore.cs" />
+    <Compile Include="src\BlockEntity\BlockEntityRegenSapling.cs" />
+    <Compile Include="src\BlockEntity\BlockEntityTrunk.cs" />
+    <Compile Include="src\Block\BlockLivingLogSection.cs" />
+    <Compile Include="src\Block\BlockTrunk.cs" />
     <Compile Include="src\Block\BlockEnhancedVines.cs" />
     <Compile Include="src\BlockEntity\BESeaweed.cs" />
     <Compile Include="src\BlockEntity\BEVines.cs" />
     <Compile Include="src\Item\ItemMushroomSpawn.cs" />
+    <Compile Include="src\Patches.cs" />
     <Compile Include="src\WF.cs" />
     <Compile Include="src\BlockEntity\WildPlant.cs" />
     <Compile Include="src\Item\WildSeed.cs" />

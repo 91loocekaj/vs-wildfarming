@@ -1,0 +1,116 @@
+[
+  {
+    "op": "add",
+    "path": "/attributes/treeGenByType/*-ferntree-*",
+    "value": "ferntree-normal-trunk",
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "add",
+    "path": "/variantgroups/0/states/4",
+    "value": "ferntree",
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "add",
+    "path": "/attributes/maxMoistureByType",
+    "value": {
+      "*-birch-*": 1,
+      "*-oak-*": 1,
+      "*-maple-*": 0.75,
+      "*-pine-*": 0.75,
+      "*-acacia-*": 0.25,
+      "*-kapok-*": 1,
+      "*-larch-*": 1,
+      "*-crimsonkingmaple-*": 0.5,
+      "*-redwood-*": 1,
+      "*-baldcypress-*": 1,
+      "*-greenspirecypress-*": 0.25,
+      "*-ebony-*": 0.5,
+      "*-purpleheart-*": 1,
+      "*-walnut-*": 0.75,
+      "*-greenbamboo-*": 1,
+      "*-brownbamboo-*": 1,
+      "*-ferntree-*": 1
+    },
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "add",
+    "path": "/attributes/maxTempByType",
+    "value": {
+      "*-birch-*": 29,
+      "*-oak-*": 30,
+      "*-maple-*": 30,
+      "*-pine-*": 20,
+      "*-acacia-*": 40,
+      "*-kapok-*": 40,
+      "*-larch-*": 5,
+      "*-crimsonkingmaple-*": 16,
+      "*-redwood-*": 25,
+      "*-baldcypress-*": 31,
+      "*-greenspirecypress-*": 29,
+      "*-ebony-*": 40,
+      "*-purpleheart-*": 40,
+      "*-walnut-*": 29,
+      "*-greenbamboo-*": 40,
+      "*-brownbamboo-*": 40,
+      "*-ferntree-*": 40
+    },
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "add",
+    "path": "/attributes/minMoistureByType",
+    "value": {
+      "*-birch-*": 0.25,
+      "*-oak-*": 0.25,
+      "*-maple-*": 0.25,
+      "*-pine-*": 0.25,
+      "*-acacia-*": 0,
+      "*-kapok-*": 0.75,
+      "*-larch-*": 0.5,
+      "*-crimsonkingmaple-*": 0.5,
+      "*-redwood-*": 0.75,
+      "*-baldcypress-*": 0.75,
+      "*-greenspirecypress-*": 0,
+      "*-ebony-*": 0.25,
+      "*-purpleheart-*": 0.72,
+      "*-walnut-*": 0.25,
+      "*-greenbamboo-*": 0.75,
+      "*-brownbamboo-*": 0.75,
+      "*-ferntree-*": 0.75
+    },
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "add",
+    "path": "/attributes/minTempByType",
+    "value": {
+      "*-birch-*": -7,
+      "*-oak-*": -5,
+      "*-maple-*": -7,
+      "*-pine-*": -18,
+      "*-acacia-*": 21,
+      "*-kapok-*": 20,
+      "*-larch-*": -24,
+      "*-crimsonkingmaple-*": 1,
+      "*-redwood-*": 7,
+      "*-baldcypress-*": 8,
+      "*-greenspirecypress-*": 1,
+      "*-ebony-*": 21,
+      "*-purpleheart-*": 20,
+      "*-walnut-*": -1,
+      "*-greenbamboo-*": 27,
+      "*-brownbamboo-*": 22,
+      "*-ferntree-*": 19
+    },
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  },
+  {
+    "op": "replace",
+    "path": "/entityclassByType/*",
+    "value": "RegenSapling",
+    "file": "game:blocktypes/plant/plaintreesapling.json"
+  }
+]

@@ -21,6 +21,8 @@
 	"item-wildseeds-flower-californiapoppy-free" : "Golden Poppy Seeds",
 	"item-wildseeds-flower-cowparsley-free" : "Cow Parsley Seeds",
 	"item-wildseeds-flower-lilyofthevalley-free" : "Lily of the Valley Seeds",
+	"item-wildseeds-flower-cornflower-free" : "Cornflower Seeds",
+	"item-wildseeds-flower-woad-free" : "Woad Seeds",
 
 	"item-wildseeds-flower-lupine-blue-free" : "Blue Lupine Seeds",
 	"item-wildseeds-flower-lupine-orange-free" : "Orange Lupine Seeds",
@@ -58,6 +60,11 @@
 
 	"item-wildseeds-barrelcactus-normal" : "Barrel Cactus Seeds",
 	"item-wildseeds-saguarocactus-topempty" : "Dwarf Saguaro Cactus Seeds",
+
+	"item-wildseeds-fern-cinnamonfern" : "Cinnamon Fern Spores",
+	"item-wildseeds-fern-eaglefern" : "Eagle Fern Spores",
+	"item-wildseeds-fern-deerfern" : "Deer Fern Spores",
+	"item-wildseeds-fern-hartstongue" : "Hart's Tongue Fern Spores",
 
 	"item-mushroomspawn-bolete" : "Bolete Starter",
 	"item-mushroomspawn-fieldmushroom" : "Field Mushroom Starter",
@@ -130,5 +137,175 @@
 	"block-wildplant-barrelcactus-normal" : "Growing Barrel Cactus",
 	"block-wildplant-saguarocactus-topempty" : "Growing Dwarf Saguaro Cactus",
 
+	"block-wildplant-fern-cinnamonfern": "Growing Cinnamon Fern",
+	"block-wildplant-fern-eaglefern": "Growing Eagle Fern",
+	"block-wildplant-fern-deerfern": "Growing Deer Fern",
+	"block-wildplant-fern-hartstongue": "Growing Hart's Tongue Fern",
+
+	"block-trunk-birch": "Birch tree",
+	"block-trunk-oak": "Oak tree",
+	"block-trunk-maple": "Maple tree",
+	"block-trunk-pine": "Pine tree",
+	"block-trunk-acacia": "Acacia tree",
+	"block-trunk-kapok": "Kapok tree",
+	"block-trunk-baldcypress": "Bald Cypress tree",
+	"block-trunk-larch": "Larch tree",
+	"block-trunk-redwood": "Redwood tree",
+	"block-trunk-ebony": "Ebony tree",
+	"block-trunk-walnut": "Walnut tree",
+	"block-trunk-purpleheart": "Purpleheart tree",
+
 	"blockhelp-score" : "Cut Tree",
+
+	"tree-growthstage" : "Growth Stage {0}/{1}",
+	"tree-mature" : "Fully Grown",
+	"tree-hot" : "Too hot",
+	"tree-cold" : "Too cold",
+	"tree-wet" : "Too wet",
+	"tree-dry" : "Too dry",
+	"tree-noland" : "Needs farmland to grow",
+	"tree-nogrow" : "Not enough nutrients to grow",
+	"tree-noregen" : "Not enough nutrients to regenerate",
+
+
+	"botanyguide-title" : "Botany Guide",
+	"botanyguide-text" : "<strong>The Botanist Hand Guide</strong>
+
+<strong>Seed Extraction And Plant Reproduction</strong>
+Seeds from grain can be extracted by putting it into a crafting grid with a wooden pan.
+Seeds from vegetables and legumes can be extracted using shears in the crafting grid.
+Reed roots and vine tips can be grown and split into two by putting them in the crafting grid with a full bucket of water.
+Place vine tips up somewhere high, and the tip will grow down leaving vine sections you can harvest.
+Place seaweed trimmings in deep water and they will grow up, leaving seaweed you can harvest
+Place mushrooms in a barrel of rot and seal to create starting spawns, which can be placed in fertile ground to grow mushrooms.
+Seeds for flowers, fruits, cacti, and fern can be extracted with a knife in the crafting grid. These seeds do not require farmland or water, but they are sensitive to temperature and will get a heat boost in a greenhouse.
+Pine trees can be scored with a knife to leak resin.
+
+<strong>Tree Farming</strong>
+All saplings/trees have specific needs in order to grow them. They must all be planted on farmland, in a certain temperature range, have a minimum amount of moisture, and have enough nutrients to grow or regenerate. The trunk of the tree will tell you its needs and you can apply fertilizer to the farmland the tree is planted it by right clicking the trunk. Trees will regenerate leaves if they meet the above criteria and the place where the leaves should go is not blocked. Trees grow into the next stage if they meet all the above criteria, and they have all their leaves, if a leaf is blocked by something the tree will never mature. Because trees require constant moisture, it is wise to have them by a source of water. Farmland adjacent to water will maintain 75% moisture, 1 block away it maintains 50% moisture, and 2 blocks away 25%. Leaves and branches will regenerate BUT destroying a log will kill the tree and the trunk will die and turn into a regular log.
+
+<strong>Types of Trees:</strong>
+
+<strong>Birch</strong>
+Minimum Temperature: -7,
+Maximum Temperature: 29,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Oak</strong>
+Minimum Temperature: -5,
+Maximum Temperature: 30,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Maple</strong>
+Minimum Temperature: -7,
+Maximum Temperature: 30,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Pine</strong>
+Minimum Temperature: -18,
+Maximum Temperature: 20,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Acacia</strong>
+Minimum Temperature: 21,
+Maximum Temperature: 40,
+Minimum Moisture: 0%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Kapok</strong>
+Minimum Temperature: 20,
+Maximum Temperature: 40,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Larch</strong>
+Minimum Temperature: -24,
+Maximum Temperature: 5,
+Minimum Moisture: 50%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Crimson King Maple</strong>
+Minimum Temperature: 1,
+Maximum Temperature: 16,
+Minimum Moisture: 50%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Redwood</strong>
+Minimum Temperature: 7,
+Maximum Temperature: 25,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Bald Cypress</strong>
+Minimum Temperature: 8,
+Maximum Temperature: 31,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Greenspire Cypress</strong>
+Minimum Temperature: 1,
+Maximum Temperature: 29,
+Minimum Moisture: 0%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Ebony</strong>
+Minimum Temperature: 21,
+Maximum Temperature: 40,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Purpleheart</strong>
+Minimum Temperature: 20,
+Maximum Temperature: 40,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Walnut</strong>
+Minimum Temperature: -1,
+Maximum Temperature: 29,
+Minimum Moisture: 25%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+
+<strong>Green Bamboo</strong>
+Minimum Temperature: 27,
+Maximum Temperature: 40,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+Note: Produces many rhizomes, give plenty of space
+
+<strong>Brown Bamboo</strong>
+Minimum Temperature: 22,
+Maximum Temperature: 40,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+Note: Produces many rhizomes, give plenty of space
+
+<strong>Fern Tree</strong>
+Minimum Temperature: 19,
+Maximum Temperature: 40,
+Minimum Moisture: 75%,
+Regeneration Nutrients(NPK): 5, 5, 5
+Growth Nutrients(NPK): 25, 25, 25
+Note: Produces many rhizomes, give plenty of space",
+
 }

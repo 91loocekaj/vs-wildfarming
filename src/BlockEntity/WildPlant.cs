@@ -44,7 +44,7 @@ namespace WildFarming
             if (blossomAt > Api.World.Calendar.TotalHours) return;
             float temperature = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues).Temperature;
 
-            if ((temperature < minTemp || temperature > maxTemp) && !greenhouse)
+            if (BotanyConfig.Loaded.HarshWildPlants && (temperature < minTemp || temperature > maxTemp) && !greenhouse)
             {
                 blossomAt += 18;
                 return;
@@ -69,6 +69,8 @@ namespace WildFarming
             {
                 dsc.AppendLine("Less than one day until mature.");
             }
+
+            if (!BotanyConfig.Loaded.HarshWildPlants) return;
 
             if (Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues).Temperature > maxTemp && !greenhouse) dsc.AppendLine("Too hot to grow!");
             if (Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues).Temperature < minTemp && !greenhouse) dsc.AppendLine("Too cold to grow!");

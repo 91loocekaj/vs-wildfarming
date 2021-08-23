@@ -1,0 +1,12 @@
+{
+	code: "wildseeds",
+	class: "wildseed",
+	creativeinventory: { "general": ["*"] },
+	maxstacksize : 64,
+	variantgroups: [
+		{ code: "type", states: ["fern"]},
+		{ code: "fern", states: ["cinnamonfern", "deerfern", "eaglefern", "hartstongue"] }
+	],
+
+	texture: {base: "item/wildseeds", overlays: ["item/wildseeds-overlay-herb"]}
+}
