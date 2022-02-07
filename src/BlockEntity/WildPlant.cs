@@ -38,23 +38,31 @@ namespace WildFarming
         public void UpdateStep(float step)
         {
             //Determines if the plant is ready to blossom
+            if (Api.Side != EnumAppSide.Server) return;
             Room room = rmaker?.GetRoomForPosition(Pos);
             greenhouse = (room != null && room.SkylightCount > room.NonSkylightCount && room.ExitCount == 0);
 
             if (blossomAt > Api.World.Calendar.TotalHours) return;
-            float temperature = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues).Temperature;
+            ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues);
 
-            if (BotanyConfig.Loaded.HarshWildPlants && (temperature < minTemp || temperature > maxTemp) && !greenhouse)
+            if (conds == null) return;
+
+            if (BotanyConfig.Loaded.HarshWildPlants && (conds.Temperature < minTemp || conds.Temperature > maxTemp) && !greenhouse)
             {
                 blossomAt += 18;
                 return;
             }
 
-            Block self = Api.World.BlockAccessor.GetBlock(Pos);
-            string plantCode = self.CodeEndWithoutParts(1);
-            Block plant = Api.World.GetBlock(new AssetLocation("game:" + plantCode));
+            string plantCode = Block.CodeEndWithoutParts(1);
+            if (plantCode == null) Api.World.BlockAccessor.BreakBlock(Pos, null);
+            else
+            {
+                Block plant = Api.World.GetBlock(new AssetLocation("game:" + plantCode));
 
-            Api.World.BlockAccessor.SetBlock(plant.Id, Pos);
+                Api.World.BlockAccessor.SetBlock(plant.Id, Pos);
+            }
+
+            MarkDirty();
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)

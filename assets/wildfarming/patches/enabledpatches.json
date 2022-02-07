@@ -13,6 +13,13 @@
     "file": "wildfarming:recipes/grid/cactiseeds.json",
     "condition": { "when": "WFcactiEnabled", "isValue": "false" }
   },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/cactiseeds.json",
+    "condition": { "when": "WFcactiEnabled", "isValue": "false" }
+  },
 
   {
     "op": "add",
@@ -64,6 +71,20 @@
     "file": "wildfarming:recipes/grid/fruitseeds.json",
     "condition": { "when": "WFbushesEnabled", "isValue": "false" }
   },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-smallberrybush.json",
+    "condition": { "when": "WFbushesEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-bigberrybush.json",
+    "condition": { "when": "WFbushesEnabled", "isValue": "false" }
+  },
 
   {
     "op": "add",
@@ -77,6 +98,41 @@
     "path": "/1/enabled",
     "value": false,
     "file": "wildfarming:recipes/grid/flowerseeds.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-croton.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-fern.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-lupine.json",
+    "condition": { "when": "WFflowersEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "wildfarming:itemtypes/wildseeds-rafflesia.json",
     "condition": { "when": "WFflowersEnabled", "isValue": "false" }
   },
 
@@ -107,7 +163,14 @@
     "op": "add",
     "path": "/enabled",
     "value": false,
-    "file": "game:recipes/grid/mushroomspawn.json",
+    "file": "game:recipes/grid/mushroomsubstrate.json",
+    "condition": { "when": "WFmushroomsEnabled", "isValue": "false" }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "game:blocktypes/mushroomsubstrate.json",
     "condition": { "when": "WFmushroomsEnabled", "isValue": "false" }
   },
 ]

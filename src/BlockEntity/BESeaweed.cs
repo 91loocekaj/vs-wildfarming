@@ -60,6 +60,8 @@ namespace WildFarming
             AssetLocation plantCode = self.CodeWithPart("section", 1);
             Block plant = Api.World.GetBlock(plantCode);
 
+            if (plant == null) return;
+
             Api.World.BlockAccessor.SetBlock(plant.Id, Pos);
             Api.World.BlockAccessor.SetBlock(self.Id, Pos.UpCopy());
         }

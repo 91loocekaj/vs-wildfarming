@@ -2,34 +2,76 @@
 using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace WildFarming
 {
-    public class BlockEntityTrunk : BlockEntity
+    public class BlockEntityTrunk : BlockEntity, ITreePoi
     {
         //Set at runtime/from saved attributes
         Vec4i[] Tree;
         Vec4i[] Leaves;
         string[] Codes;        
         float regenPerc;
+        float logRecovery;
         double lastChecked;
         int growthStage;
         int currentGrowthTime;
+        int currentRepopTime;
+        POIRegistry treeFinder;
+        TreeFriend[] repopBuddies;
+        float friendsWeight;
+        BlockFacing[] rndFaces = { BlockFacing.NORTH, BlockFacing.SOUTH, BlockFacing.EAST, BlockFacing.WEST};
+        string treeFamily;
+        GasHelper gasPlug;
+
+        //Leaves for health calculation
+        int BrokenLeaves;
+        int DiseasedParts;
+
+        int CurrentHealthyParts
+        {
+            get
+            {
+                if (Tree == null) return 0;
+                int trueCount = Tree.Length - DiseasedParts;
+
+                return trueCount < 0 ? 0 : trueCount;
+            }
+        }
+
+        int CurrentLeaves
+        {
+            get
+            {
+                if (Leaves == null) return 0;
+                int trueCount = Leaves.Length - BrokenLeaves;
+
+                return trueCount < 0 ? 0 : trueCount;
+            }
+        }
+
+        float CurrentHealth
+        {
+            get 
+            { 
+                float leavesHealth = (float)CurrentLeaves / (float)Leaves.Length;
+                float treeHealth = (float)CurrentHealthyParts / (float)Tree.Length;
+                return (0.5f * leavesHealth) + (0.5f * treeHealth);
+            }
+        }
 
         //Set from json attributes
-        float[] nutrientsConsumedOnRegen;
-        float[] nutrientsConsumedOnGrowth;
         Block deathBlock;
         int timeForNextStage;
         float maxTemp;
         float minTemp;
-        float maxMoisture;
-        float minMoisture;
 
         //For chunk checking
         int mincx, mincy, mincz, maxcx, maxcy, maxcz;
@@ -37,30 +79,55 @@ namespace WildFarming
         //For block setting
         public IBulkBlockAccessor changer;
 
+        public string Stage => growthStage >= BotanyConfig.Loaded.MaxTreeGrowthStages ? "mature" : "young-" + growthStage;
 
+        public Vec3d Position => Pos.ToVec3d().Add(0.5);
+
+        public string Type => "tree";
 
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
 
-            if (!BotanyConfig.Loaded.LivingTreesEnabled)
-            {
-                Api.World.BlockAccessor.SetBlock(deathBlock.BlockId, Pos);
-                return;
-            }
-
             RegisterGameTickListener(Regenerate, 3000);
-            nutrientsConsumedOnRegen = Block.Attributes["regenNutrients"].AsArray<float>(new float[] { 5, 5, 5});
-            nutrientsConsumedOnGrowth = Block.Attributes["growthNutrients"].AsArray<float>(new float[] { 25, 25, 25 });
+
+            gasPlug = api.ModLoader.GetModSystem<GasHelper>();
+
             deathBlock = api.World.GetBlock(new AssetLocation(Block.Attributes["deathState"].AsString("game:air")));
             timeForNextStage = Block.Attributes["growthTime"].AsInt(96);
 
             minTemp = Block.Attributes["minTemp"].AsFloat(0f);
             maxTemp = Block.Attributes["maxTemp"].AsFloat(60f);
-            minMoisture = Block.Attributes["minMoisture"].AsFloat(0f);
-            //Max moisture disabled for now due to rain
-            maxMoisture = 1; //Block.Attributes["maxMoisture"].AsFloat(1f);
 
+            TreeFriend[] jsonFriends = Block.Attributes["treeFriends"].AsObject<TreeFriend[]>();
+            
+            if (jsonFriends != null && jsonFriends.Length > 0)
+            {
+                List<TreeFriend> checkFriends = new List<TreeFriend>();
+
+                for (int i = 0; i < jsonFriends.Length; i++)
+                {
+                    bool resolved = jsonFriends[i].Resolve(api);
+
+                    if (resolved)
+                    {
+                        checkFriends.Add(jsonFriends[i]);
+                        friendsWeight += jsonFriends[i].Weight;
+                    }
+                }
+
+                repopBuddies = checkFriends.ToArray();
+            }
+            else repopBuddies = new TreeFriend[0];
+
+            treeFamily = WildFarming.GetTreeFamily(Block.Attributes?["treeGen"].AsString(null));
+
+            if (api.Side == EnumAppSide.Server)
+            {
+                treeFinder = api.ModLoader.GetModSystem<POIRegistry>();
+                treeFinder.AddPOI(this);
+            }
+            
             changer = Api.World.GetBlockAccessorBulkUpdate(true, true);
             changer.ReadFromStagedByDefault = true;
         }
@@ -74,6 +141,13 @@ namespace WildFarming
 
         public void Regenerate(float dt)
         {
+            if (!BotanyConfig.Loaded.LivingTreesEnabled)
+            {
+                Api.World.BlockAccessor.SetBlock(deathBlock.BlockId, Pos);
+                treeFinder.RemovePOI(this);
+                return;
+            }
+
             if (Api.Side != EnumAppSide.Server || Tree == null || Tree.Length < 0 || Leaves == null || Leaves.Length < 0) return;
             ICoreServerAPI sapi = Api as ICoreServerAPI;
 
@@ -93,12 +167,16 @@ namespace WildFarming
             double sinceLastChecked = Api.World.Calendar.TotalHours - lastChecked;
             if (sinceLastChecked < hoursPerDay) return;
             int daysPassed = 0;
+            bool growNow = false;
+            List<ClimateCondition> dailyConds = new List<ClimateCondition>();
 
+            //Find out how many days have passed and get climate for those days
             while (sinceLastChecked >= hoursPerDay)
             {
                 sinceLastChecked -= hoursPerDay;
                 lastChecked += hoursPerDay;
                 daysPassed++;
+                dailyConds.Add(Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.ForSuppliedDate_TemperatureOnly, lastChecked));
             }
 
             BlockPos tmpPos = Pos.Copy();
@@ -115,31 +193,10 @@ namespace WildFarming
                 if (blockThere.FirstCodePart() != desiredBlock.FirstCodePart() || blockThere.Variant["wood"] != desiredBlock.Variant["wood"] || blockThere.Variant["type"] == "placed")
                 {
                     Api.World.BlockAccessor.SetBlock(deathBlock.BlockId, Pos);
+                    treeFinder.RemovePOI(this);
                     return;
                 }
             }
-
-            //Don't do anything if too hot or too cold
-            ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues);
-            if (conds != null && (conds.Temperature < minTemp || conds.Temperature > maxTemp))
-            {
-                if (conds.Temperature < minTemp - BotanyConfig.Loaded.TreeRevertGrowthTempThreshold || conds.Temperature > maxTemp + BotanyConfig.Loaded.TreeRevertGrowthTempThreshold)
-                {
-                    regenPerc = 0f;
-                    if (currentGrowthTime > timeForNextStage / 2) currentGrowthTime -= (int)hoursPerDay;
-                }
-            }
-
-            //Needs to be on farmland to grow further and regenerate
-            BlockEntityFarmland fl = Api.World.BlockAccessor.GetBlockEntity(tmpPos.Set(Pos).Down()) as BlockEntityFarmland;
-            if (fl == null)
-            {
-                Api.World.BlockAccessor.SetBlock(deathBlock.BlockId, Pos);
-                return;
-            }
-
-            //Don't do anything if too dry or too wet
-            if (fl.MoistureLevel > maxMoisture || fl.MoistureLevel < minMoisture) return;
 
             //Check for missing leaves
             Queue<Vec4i> missingLeaves = new Queue<Vec4i>();
@@ -158,42 +215,63 @@ namespace WildFarming
                 }
             }
 
+            BrokenLeaves = missingLeaves.Count + blockedLeaves.Count;
+
             //Mark for regeneration
             for (int d = 0; d < daysPassed; d++)
             {
-                for (int h = 0; h < 24; h++)
+                if (dailyConds[d].Temperature < minTemp || dailyConds[d].Temperature > maxTemp)
                 {
-                    if (missingLeaves.Count > 0 && NutrientsToRegen(fl))
+                    //Do not do anything if too or too hot
+                    if (dailyConds[d].Temperature < minTemp - BotanyConfig.Loaded.TreeRevertGrowthTempThreshold || dailyConds[d].Temperature > maxTemp + BotanyConfig.Loaded.TreeRevertGrowthTempThreshold)
                     {
-                        regenPerc += 1f - Math.Max(0.05f, (float)(missingLeaves.Count + blockedLeaves.Count) / (float)Leaves.Length) * BotanyConfig.Loaded.TreeRegenMultiplier;
-                        if (regenPerc > 1f)
+                        regenPerc = 0f;
+                        if (currentGrowthTime > timeForNextStage / 2) currentGrowthTime -= (int)hoursPerDay;
+                    }
+                }
+                else
+                {
+                    for (int h = 0; h < 24; h++)
+                    {
+                        if (missingLeaves.Count > 0 || DiseasedParts > 0)
                         {
-                            regenPerc -= 1f;
-                            regenedLeaves.Enqueue(missingLeaves.Dequeue());
-                            fl.Nutrients[0] -= nutrientsConsumedOnRegen[0];
-                            fl.Nutrients[1] -= nutrientsConsumedOnRegen[1];
-                            fl.Nutrients[2] -= nutrientsConsumedOnRegen[2];
+                            regenPerc += Math.Max(0.01f, CurrentHealth) * BotanyConfig.Loaded.TreeRegenMultiplier;
+                            if (regenPerc > 1f)
+                            {
+                                regenPerc -= 1f;
+                                if (DiseasedParts > 0)
+                                {
+                                    logRecovery++;
+                                    if (logRecovery >= 5)
+                                    {
+                                        DiseasedParts--;
+                                        logRecovery = 0;
+                                    }
+                                }
+                                else if (CurrentLeaves < Leaves.Length)
+                                {
+                                    regenedLeaves.Enqueue(missingLeaves.Dequeue());
+                                    BrokenLeaves--;
+                                }
+                            }
+                        }
+
+                        if (CurrentHealth > 0.85)
+                        {
+                            if (growthStage < BotanyConfig.Loaded.MaxTreeGrowthStages) currentGrowthTime++;
+                            else currentRepopTime++;
+
+                            while (growthStage <= BotanyConfig.Loaded.MaxTreeGrowthStages && currentGrowthTime >= timeForNextStage)
+                            {
+                                currentGrowthTime -= timeForNextStage;
+                                growthStage++;
+                                growNow = true;
+                            }
                         }
                     }
-
-                    if (growthStage <= BotanyConfig.Loaded.MaxTreeGrowthStages && missingLeaves.Count <= 0 && blockedLeaves.Count <= 0) currentGrowthTime++;
                 }
             }
-
-            //See if it is time to grow or not
-            bool growNow = false;
-
-
-            while (growthStage <= BotanyConfig.Loaded.MaxTreeGrowthStages && currentGrowthTime >= timeForNextStage &&
-                NutrientsToGrow(fl))
-            {
-                currentGrowthTime -= timeForNextStage;
-                growthStage++;
-                growNow = true;
-                fl.Nutrients[0] -= nutrientsConsumedOnGrowth[0];
-                fl.Nutrients[1] -= nutrientsConsumedOnGrowth[1];
-                fl.Nutrients[2] -= nutrientsConsumedOnGrowth[2];
-            }
+            
 
             //If  the tree is going to grow into another stage, then we do not really need to set the regenerated leaf blocks
 
@@ -223,11 +301,12 @@ namespace WildFarming
                 
                 
                 float size = 0.6f + (0.125f * growthStage);
-                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.AddCopy(0, Block.Variant["wood"] == "redwood" ? 1 : 0, 0), size, 0, 0);
+                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.AddCopy(0, Block.Variant["wood"] == "redwood" ? 1 : 0, 0), true, size);
                 setupTree(changer.Commit());
             }
             else if (regenedLeaves.Count > 0)
             {
+                //We did not grow up, so let's regen
                 while (regenedLeaves.Count > 0)
                 {
                     Vec4i leaf = regenedLeaves.Dequeue();
@@ -239,8 +318,129 @@ namespace WildFarming
                 changer.Commit();
             }
 
+            if (currentRepopTime >= 24)
+            {
+                bool sapped = false;
+                int matureDay = dailyConds.Count;
+
+                while (currentRepopTime >= 24)
+                {
+                    currentRepopTime -= 24;
+                    matureDay--;
+                    int foilTriesPerDay = BotanyConfig.Loaded.TreeFoilageTriesPerDay;
+
+                    //Plant foilage
+
+                    if (repopBuddies.Length > 0 && BotanyConfig.Loaded.TreeFoilageChance >= Api.World.Rand.NextDouble())
+                    {
+                        TreeFriend pop = GetRandomFriend(Api.World.Rand, dailyConds[matureDay]);
+
+                        if (pop != null)
+                        {
+                            while (foilTriesPerDay > 0)
+                            {
+                                bool foilPlanted = false;
+
+                                if (pop.OnGround)
+                                {
+                                    int foilX = Api.World.Rand.Next(-BotanyConfig.Loaded.GrownTreeRepopMinimum + 1, BotanyConfig.Loaded.GrownTreeRepopMinimum);
+                                    int foilZ = Api.World.Rand.Next(-BotanyConfig.Loaded.GrownTreeRepopMinimum + 1, BotanyConfig.Loaded.GrownTreeRepopMinimum);
+                                    tmpPos.Set(Pos);
+                                    tmpPos.Add(foilX, -BotanyConfig.Loaded.GrownTreeRepopVertSearch, foilZ);
+
+                                    for (int f = tmpPos.Y; f < BotanyConfig.Loaded.GrownTreeRepopVertSearch; f++)
+                                    {
+                                        tmpPos.Y += 1;
+                                        if (pop.TryToPlant(tmpPos, changer, null))
+                                        {
+                                            Block floor = changer.GetBlock(new AssetLocation("game:forestfloor-" + Api.World.Rand.Next(8)));
+                                            changer.SetBlock(floor.BlockId, tmpPos);
+                                            foilPlanted = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Vec4i randomLog = Tree[Api.World.Rand.Next(Tree.Length)];
+                                    tmpPos.Set(randomLog.X, randomLog.Y, randomLog.Z);
+
+                                    if (pop.OnUnderneath) pop.TryToPlant(tmpPos, changer, null);
+                                    else
+                                    {
+                                        rndFaces.Shuffle(Api.World.Rand);
+
+                                        foreach (BlockFacing side in rndFaces)
+                                        {
+                                            if (pop.TryToPlant(tmpPos, changer, side))
+                                            {
+                                                foilPlanted = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (foilPlanted) foilTriesPerDay = 0; else foilTriesPerDay--;
+                            }
+
+                        }
+                    }
+
+                    //Plant a sapling
+                    if (!sapped && Api.World.Rand.NextDouble() <= BotanyConfig.Loaded.TreeRepopChance)
+                    {
+                        //Plant sapling
+                        Block plant = Api.World.GetBlock(new AssetLocation("sapling-" + Block.Variant["wood"] + "-free"));
+
+                        bool whichside = Api.World.Rand.NextDouble() > 0.5;
+                        int side = Api.World.Rand.NextDouble() > 0.5 ? -BotanyConfig.Loaded.GrownTreeRepopMinimum : BotanyConfig.Loaded.GrownTreeRepopMinimum;
+                        int sidepos = Api.World.Rand.Next(-BotanyConfig.Loaded.GrownTreeRepopMinimum, BotanyConfig.Loaded.GrownTreeRepopMinimum + 1);
+                        tmpPos.Set(Pos);
+                        tmpPos.Add(whichside ? side : sidepos, -BotanyConfig.Loaded.GrownTreeRepopVertSearch, !whichside ? side : sidepos);
+
+                        bool groundCheck = false;
+
+                        IPointOfInterest found = treeFinder.GetNearestPoi(tmpPos.ToVec3d().Add(0.5, BotanyConfig.Loaded.GrownTreeRepopVertSearch, 0.5), BotanyConfig.Loaded.GrownTreeRepopMinimum, (poi) =>
+                        {
+                            if (poi == this || !(poi is ITreePoi)) return false;
+                            return true;
+                        });
+
+                        if (found == null)
+                        {
+                            for (int f = tmpPos.Y; f < BotanyConfig.Loaded.GrownTreeRepopVertSearch; f++)
+                            {
+                                tmpPos.Y += 1;
+                                Block foilSearch = Api.World.BlockAccessor.GetBlock(tmpPos);
+                                if (foilSearch == null) continue;
+
+                                if (groundCheck)
+                                {
+                                    if (foilSearch.IsReplacableBy(plant))
+                                    {
+
+                                        Api.World.BlockAccessor.SetBlock(plant.BlockId, tmpPos);
+                                        sapped = true;
+                                        break;
+                                    }
+                                    else groundCheck = foilSearch.Fertility > 0 && foilSearch.SideSolid[BlockFacing.UP.Index];
+                                }
+                                else
+                                {
+                                    groundCheck = foilSearch.Fertility > 0 && foilSearch.SideSolid[BlockFacing.UP.Index];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                changer.Commit();
+            }
+
+            gasPlug?.CollectGases(Pos, (growthStage + 1) * 10, new string[] { "silicadust", "coaldust", "carbondioxide", "carbonmonoxide", "sulfurdioxide", "nitrogendioxide"});
+
             MarkDirty();
-            fl.MarkDirty();
         }
 
         public void setupTree(List<BlockUpdate> commited)
@@ -255,6 +455,8 @@ namespace WildFarming
             maxcx = Pos.X;
             maxcy = Pos.Y;
             maxcz = Pos.Z;
+            BrokenLeaves = 0;
+            DiseasedParts = 0;
 
             for (int i = 0; i < commited.Count; i++)
             {
@@ -331,14 +533,52 @@ namespace WildFarming
             MarkDirty();
         }
 
+        private TreeFriend GetRandomFriend(Random rand, ClimateCondition conds)
+        {
+            TreeFriend result = null;
+            int tries = 20;
+
+            while (result == null && tries > 0)
+            {
+                double rndTarget = rand.NextDouble() * (double)friendsWeight;
+                repopBuddies.Shuffle(rand);
+                tries--;
+
+                foreach (TreeFriend friend in repopBuddies)
+                {
+                    rndTarget -= friend.Weight;
+
+                    if (rndTarget <= 0)
+                    {
+                        if (friend.CanPlant(conds, treeFamily)) result = friend;
+
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public void DestroyTree(int amount)
+        {
+            if (Tree == null) return;
+            DiseasedParts = GameMath.Clamp(DiseasedParts + amount, 0, Tree.Length);
+            MarkDirty();
+        }
+
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
 
             tree.SetDouble("lastChecked", lastChecked);
             tree.SetFloat("regenPerc", regenPerc);
+            tree.SetFloat("logRecovery", logRecovery);
             tree.SetInt("currentGrowthTime", currentGrowthTime);
+            tree.SetInt("currentRepopTime", currentRepopTime);
             tree.SetInt("growthStage", growthStage);
+            tree.SetInt("BrokenLeaves", BrokenLeaves);
+            tree.SetInt("DestroyedLeaves", DiseasedParts);
 
             tree.SetInt("mincx", mincx);
             tree.SetInt("mincy", mincy);
@@ -400,8 +640,13 @@ namespace WildFarming
 
             lastChecked = tree.GetDouble("lastChecked", worldAccessForResolve.Calendar.TotalHours);
             regenPerc = tree.GetFloat("regenPerc");
+            logRecovery = tree.GetFloat("logRecovery");
             currentGrowthTime = tree.GetInt("currentGrowthTime");
+            currentRepopTime = tree.GetInt("currentRepopTime");
             growthStage = tree.GetInt("growthStage");
+            BrokenLeaves = tree.GetInt("BrokenLeaves");
+            DiseasedParts = tree.GetInt("DestroyedLeaves");
+
 
             mincx = tree.GetInt("mincx");
             maxcx = tree.GetInt("maxcx");
@@ -462,6 +707,10 @@ namespace WildFarming
         {
             base.GetBlockInfo(forPlayer, dsc);
 
+            if (Leaves == null) return;
+
+            dsc.AppendLine(Lang.Get("wildfarming:tree-health", (CurrentHealth * 100).ToString("#.#"), 100));
+
             if (growthStage < BotanyConfig.Loaded.MaxTreeGrowthStages)
             {
                 dsc.AppendLine(Lang.Get("wildfarming:tree-growthstage", growthStage + 1, BotanyConfig.Loaded.MaxTreeGrowthStages + 1));
@@ -471,33 +720,38 @@ namespace WildFarming
                 dsc.AppendLine(Lang.Get("wildfarming:tree-mature"));
             }
 
-            BlockEntityFarmland fl = Api.World.BlockAccessor.GetBlockEntity(Pos.DownCopy()) as BlockEntityFarmland;
-            ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos);
-
-            if (fl == null)
-            {
-                dsc.AppendLine(Lang.Get("wildfarming:tree-noland"));
-                return;
-            }
+            ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues);
 
             if (conds.Temperature < minTemp) dsc.AppendLine(Lang.Get("wildfarming:tree-cold"));
             else if (conds.Temperature > maxTemp) dsc.AppendLine(Lang.Get("wildfarming:tree-hot"));
-            else if (fl.MoistureLevel < minMoisture) dsc.AppendLine(Lang.Get("wildfarming:tree-dry"));
-            else if (fl.MoistureLevel > maxMoisture) dsc.AppendLine(Lang.Get("wildfarming:tree-wet"));
-            else if (!NutrientsToRegen(fl)) dsc.AppendLine(Lang.Get("wildfarming:tree-noregen"));
-            else if (growthStage < BotanyConfig.Loaded.MaxTreeGrowthStages && !NutrientsToGrow(fl)) dsc.AppendLine(Lang.Get("wildfarming:tree-nogrow"));
-
-            fl.GetBlockInfo(forPlayer, dsc);
         }
 
-        public bool NutrientsToGrow(BlockEntityFarmland fl)
+        public override void OnBlockRemoved()
         {
-            return fl.Nutrients[0] >= nutrientsConsumedOnGrowth[0] && fl.Nutrients[1] >= nutrientsConsumedOnGrowth[1] && fl.Nutrients[2] >= nutrientsConsumedOnGrowth[2];
+            base.OnBlockRemoved();
+            if (Api.Side == EnumAppSide.Server) treeFinder?.RemovePOI(this);
         }
 
-        public bool NutrientsToRegen(BlockEntityFarmland fl)
+        public override void OnBlockUnloaded()
         {
-            return fl.Nutrients[0] >= nutrientsConsumedOnRegen[0] && fl.Nutrients[1] >= nutrientsConsumedOnRegen[1] && fl.Nutrients[2] >= nutrientsConsumedOnRegen[2];
+            base.OnBlockUnloaded();
+
+            if (Api.Side == EnumAppSide.Server) treeFinder?.RemovePOI(this);
+        }
+
+        public bool IsSuitableFor(Entity entity)
+        {
+            if (CurrentHealthyParts < 1) return false;
+            string[] diet = entity.Properties.Attributes?["blockDiet"]?.AsArray<string>();
+            if (diet == null) return false;
+
+            return diet.Contains("Wood");
+        }
+
+        public float ConsumeOnePortion()
+        {
+            DestroyTree(1);
+            return 1;
         }
     }
 }

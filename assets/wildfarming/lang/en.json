@@ -1,15 +1,4 @@
 {
-	"item-wildseeds-*": "Wild Seeds!",
-	"item-wildseeds-herb-basil" : "Basil Seeds",
-	"item-wildseeds-herb-chamomile" : "Chamomile Seeds",
-	"item-wildseeds-herb-cilantro" : "Ciltrano Seeds",
-	"item-wildseeds-herb-lavender" : "Lavender Seeds",
-	"item-wildseeds-herb-marjoram" : "Marjoram Seeds",
-	"item-wildseeds-herb-mint" : "Mint Seeds",
-	"item-wildseeds-herb-saffron" : "Saffron Seeds",
-	"item-wildseeds-herb-sage" : "Sage Seeds",
-	"item-wildseeds-herb-thyme" : "Thyme Seeds",
-
 	"item-wildseeds-flower-catmint-free" : "Catmint Seeds",
 	"item-wildseeds-flower-forgetmenot-free" : "Forget me not Seeds",
 	"item-wildseeds-flower-edelweiss-free" : "Edelweiss Seeds",
@@ -65,10 +54,6 @@
 	"item-wildseeds-fern-eaglefern" : "Eagle Fern Spores",
 	"item-wildseeds-fern-deerfern" : "Deer Fern Spores",
 	"item-wildseeds-fern-hartstongue" : "Hart's Tongue Fern Spores",
-
-	"item-mushroomspawn-bolete" : "Bolete Starter",
-	"item-mushroomspawn-fieldmushroom" : "Field Mushroom Starter",
-	"item-mushroomspawn-flyagaric" : "Fly Agaric Starter",
 
 	"item-burlapsack" : "Burlap Sack",
 
@@ -154,9 +139,11 @@
 	"block-trunk-ebony": "Ebony tree",
 	"block-trunk-walnut": "Walnut tree",
 	"block-trunk-purpleheart": "Purpleheart tree",
+	"block-mushroomsubstrate" : "Mushroom Substrate",
 
 	"blockhelp-score" : "Cut Tree",
 
+  "tree-health" : "Health {0}% / {1}%",
 	"tree-growthstage" : "Growth Stage {0}/{1}",
 	"tree-mature" : "Fully Grown",
 	"tree-hot" : "Too hot",
@@ -166,6 +153,13 @@
 	"tree-noland" : "Needs farmland to grow",
 	"tree-nogrow" : "Not enough nutrients to grow",
 	"tree-noregen" : "Not enough nutrients to regenerate",
+
+  "msubstrate-incubating": "Growing {0}",
+	"msubstrate-growing" : "Days left until mushrooms appear {0}",
+	"msubstrate-fruiting" : "Days left until mushrooms disappear {0}",
+	"mushroom-tropical" : "Grows with/on Tropical trees",
+	"mushroom-conifer" : "Grows with/on Conifer trees",
+	"mushroom-decidious" : "Grows with/on Deciduous trees",
 
 
 	"botanyguide-title" : "Botany Guide",
@@ -177,135 +171,103 @@ Seeds from vegetables and legumes can be extracted using shears in the crafting 
 Reed roots and vine tips can be grown and split into two by putting them in the crafting grid with a full bucket of water.
 Place vine tips up somewhere high, and the tip will grow down leaving vine sections you can harvest.
 Place seaweed trimmings in deep water and they will grow up, leaving seaweed you can harvest
-Place mushrooms in a barrel of rot and seal to create starting spawns, which can be placed in fertile ground to grow mushrooms.
 Seeds for flowers, fruits, cacti, and fern can be extracted with a knife in the crafting grid. These seeds do not require farmland or water, but they are sensitive to temperature and will get a heat boost in a greenhouse.
 Pine trees can be scored with a knife to leak resin.
 
+<strong>Mushroom Farming</strong>
+To start farming mushrooms you will need <a href=\"handbook://block-wildfarming:mushroomsubstrate\">mushroom substrate</a> and the mushroom you want to grow. Right clicking on the substrate with the mushroom will set it. For ground mushrooms, they will grow with in 7 blocks of the substrate randomly on dirt that is on the same level as the substrate. For side growing mushrooms place 5 logs on top of the substrate that match the mushrooms preferred type and they will grow on the sides of the log.
+
 <strong>Tree Farming</strong>
-All saplings/trees have specific needs in order to grow them. They must all be planted on farmland, in a certain temperature range, have a minimum amount of moisture, and have enough nutrients to grow or regenerate. The trunk of the tree will tell you its needs and you can apply fertilizer to the farmland the tree is planted it by right clicking the trunk. Trees will regenerate leaves if they meet the above criteria and the place where the leaves should go is not blocked. Trees grow into the next stage if they meet all the above criteria, and they have all their leaves, if a leaf is blocked by something the tree will never mature. Because trees require constant moisture, it is wise to have them by a source of water. Farmland adjacent to water will maintain 75% moisture, 1 block away it maintains 50% moisture, and 2 blocks away 25%. Leaves and branches will regenerate BUT destroying a log will kill the tree and the trunk will die and turn into a regular log.
+All saplings/trees have specific needs in order to grow them. They must all in a certain temperature range. The trunk of the tree will tell you if it is too hot or too cold. Trees will regenerate leaves if they meet the above criteria and the place where the leaves should go is not blocked. Tree health is 50% based on the amount of leaves and 50% based on the health of the wood. Breaking or blocking leaves will reduce its leaf health. Parasites like termites will reduce its log health. Trees grow into the next stage if they have at least 85% health. Leaves and branches will regenerate BUT destroying a log will kill the tree and the trunk will die and turn into a regular log. Fully grown trees will attract different flora and will plant more saplings in the area if at least 75% health. Be careful though, as fully grown trees can also attract harmful organisms like termites. Note: Bamboo and fern trees are not “living”.
 
 <strong>Types of Trees:</strong>
 
 <strong>Birch</strong>
+Type: Deciduous
 Minimum Temperature: -7,
-Maximum Temperature: 29,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 39
 
 <strong>Oak</strong>
+Type: Deciduous
 Minimum Temperature: -5,
-Maximum Temperature: 30,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 40
 
 <strong>Maple</strong>
+Type: Deciduous
 Minimum Temperature: -7,
-Maximum Temperature: 30,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 40
 
 <strong>Pine</strong>
+Type: Conifer
 Minimum Temperature: -18,
-Maximum Temperature: 20,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 30
 
 <strong>Acacia</strong>
+Type: Non-Standard
 Minimum Temperature: 21,
-Maximum Temperature: 40,
-Minimum Moisture: 0%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50,
 
 <strong>Kapok</strong>
+Type: Tropical
 Minimum Temperature: 20,
-Maximum Temperature: 40,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50,
 
 <strong>Larch</strong>
+Type: Conifer
 Minimum Temperature: -24,
-Maximum Temperature: 5,
-Minimum Moisture: 50%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 15,
 
 <strong>Crimson King Maple</strong>
+Type: Deciduous
 Minimum Temperature: 1,
-Maximum Temperature: 16,
-Minimum Moisture: 50%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 26
 
 <strong>Redwood</strong>
+Type: Conifer
 Minimum Temperature: 7,
-Maximum Temperature: 25,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 35
 
 <strong>Bald Cypress</strong>
+Type: Conifer
 Minimum Temperature: 8,
-Maximum Temperature: 31,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 41
 
 <strong>Greenspire Cypress</strong>
+Type: Conifer
 Minimum Temperature: 1,
-Maximum Temperature: 29,
-Minimum Moisture: 0%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 39
 
 <strong>Ebony</strong>
+Type: Confier
 Minimum Temperature: 21,
-Maximum Temperature: 40,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50
 
 <strong>Purpleheart</strong>
+Type: Tropical
 Minimum Temperature: 20,
-Maximum Temperature: 40,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50
 
 <strong>Walnut</strong>
+Type: Deciduous
 Minimum Temperature: -1,
-Maximum Temperature: 29,
-Minimum Moisture: 25%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 39
 
 <strong>Green Bamboo</strong>
+Type: Non-Standard
 Minimum Temperature: 27,
-Maximum Temperature: 40,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50,
 Note: Produces many rhizomes, give plenty of space
 
 <strong>Brown Bamboo</strong>
+Type: Non-Standard
 Minimum Temperature: 22,
-Maximum Temperature: 40,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50,
 Note: Produces many rhizomes, give plenty of space
 
 <strong>Fern Tree</strong>
+Type: Non-Standard
 Minimum Temperature: 19,
-Maximum Temperature: 40,
-Minimum Moisture: 75%,
-Regeneration Nutrients(NPK): 5, 5, 5
-Growth Nutrients(NPK): 25, 25, 25
+Maximum Temperature: 50,
 Note: Produces many rhizomes, give plenty of space",
 
 }

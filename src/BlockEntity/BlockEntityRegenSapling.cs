@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -10,7 +11,7 @@ using Vintagestory.GameContent;
 
 namespace WildFarming
 {
-    public class BlockEntityRegenSapling : BlockEntity
+    public class BlockEntityRegenSapling : BlockEntity, ITreePoi
     {
         double totalHoursTillGrowth;
         long growListenerId;
@@ -18,10 +19,8 @@ namespace WildFarming
         bool plantedFromSeed;
         float maxTemp;
         float minTemp;
-        float maxMoisture;
-        float minMoisture;
-        float[] nutrientsConsumedOnGrowth;
         public IBulkBlockAccessor changer;
+        POIRegistry treeFinder;
 
         MeshData dirtMoundMesh
         {
@@ -49,17 +48,15 @@ namespace WildFarming
 
             minTemp = Block.Attributes["minTemp"].AsFloat(0f);
             maxTemp = Block.Attributes["maxTemp"].AsFloat(60f);
-            minMoisture = Block.Attributes["minMoisture"].AsFloat(0f);
-            maxMoisture = 1; //Block.Attributes["maxMoisture"].AsFloat(1f);
-            nutrientsConsumedOnGrowth = Block.Attributes["growthNutrients"].AsArray<float>(new float[] { 25, 25, 25 });
             changer = Api.World.GetBlockAccessorBulkUpdate(true, true);
             changer.ReadFromStagedByDefault = true;
-
-            //System.Diagnostics.Debug.WriteLine(Block.Attributes);
+            
 
             if (api is ICoreServerAPI)
             {
                 growListenerId = RegisterGameTickListener(CheckGrow, 2000);
+                treeFinder = api.ModLoader.GetModSystem<POIRegistry>();
+                treeFinder.AddPOI(this);
             }
         }
 
@@ -88,6 +85,12 @@ namespace WildFarming
 
         float GrowthRateMod => Api.World.Config.GetString("saplingGrowthRate").ToFloat(1);
 
+        public string Stage => stage == EnumTreeGrowthStage.Sapling ? "sapling" : "seed";
+
+        public Vec3d Position => Pos.ToVec3d().Add(0.5);
+
+        public string Type => "tree";
+
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
             stage = byItemStack?.Collectible is ItemTreeSeed ? EnumTreeGrowthStage.Seed : EnumTreeGrowthStage.Sapling;
@@ -101,13 +104,10 @@ namespace WildFarming
             if (Api.World.Calendar.TotalHours < totalHoursTillGrowth) return;
 
             ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues);
-            BlockEntityFarmland fl = Api.World.BlockAccessor.GetBlockEntity(Pos.DownCopy()) as BlockEntityFarmland;
             
             if (BotanyConfig.Loaded.HarshSaplingsEnabled)
             {
-                if (fl == null || conds == null || fl.MoistureLevel < minMoisture || fl.MoistureLevel > maxMoisture) return;
-
-                if (fl.Nutrients[0] < nutrientsConsumedOnGrowth[0] && fl.Nutrients[1] < nutrientsConsumedOnGrowth[1] && fl.Nutrients[2] < nutrientsConsumedOnGrowth[2]) return;
+                if (conds == null) return;
                 if (conds.Temperature < minTemp || conds.Temperature > maxTemp)
                 {
                     if (conds.Temperature < minTemp - BotanyConfig.Loaded.TreeRevertGrowthTempThreshold || conds.Temperature > maxTemp + BotanyConfig.Loaded.TreeRevertGrowthTempThreshold)
@@ -201,18 +201,11 @@ namespace WildFarming
 
             }
 
-            if (BotanyConfig.Loaded.HarshSaplingsEnabled)
-            {
-                fl.Nutrients[0] -= nutrientsConsumedOnGrowth[0];
-                fl.Nutrients[1] -= nutrientsConsumedOnGrowth[1];
-                fl.Nutrients[2] -= nutrientsConsumedOnGrowth[2];
-            }
-
             if (BotanyConfig.Loaded.LivingTreesEnabled && found)
             {
                 Api.World.BlockAccessor.SetBlock(trunk.BlockId, Pos);
                 float size = BotanyConfig.Loaded.SaplingToTreeSize;
-                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.AddCopy(0, doubleThick ? 1 : 0, 0), size, 0, 0);
+                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.AddCopy(0, doubleThick ? 1 : 0, 0), true, size, 0, 0);
                 BlockEntityTrunk growth = Api.World.BlockAccessor.GetBlockEntity(Pos) as BlockEntityTrunk;
                 if (growth != null) growth.setupTree(changer.Commit()); else changer.Commit();
             }
@@ -220,9 +213,15 @@ namespace WildFarming
             {
                 Api.World.BlockAccessor.SetBlock(0, Pos);
                 float size = 0.6f + (float)Api.World.Rand.NextDouble() * 0.5f;
-                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.DownCopy(), size, 0, 0);
+                sapi.World.TreeGenerators[code].GrowTree(changer, Pos.DownCopy(), true, size, 0, 0);
                 changer.Commit();
             }
+        }
+
+        public override void OnBlockRemoved()
+        {
+            treeFinder?.RemovePOI(this);
+            base.OnBlockRemoved();
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -303,21 +302,10 @@ namespace WildFarming
 
             if (BotanyConfig.Loaded.HarshSaplingsEnabled)
             {
-                BlockEntityFarmland fl = Api.World.BlockAccessor.GetBlockEntity(Pos.DownCopy()) as BlockEntityFarmland;
                 ClimateCondition conds = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.NowValues);
-
-                if (fl == null)
-                {
-                    dsc.AppendLine(Lang.Get("wildfarming:tree-noland"));
-                    return;
-                }
 
                 if (conds.Temperature < minTemp) dsc.AppendLine(Lang.Get("wildfarming:tree-cold"));
                 else if (conds.Temperature > maxTemp) dsc.AppendLine(Lang.Get("wildfarming:tree-hot"));
-                else if (fl.MoistureLevel < minMoisture) dsc.AppendLine(Lang.Get("wildfarming:tree-dry"));
-                else if (fl.MoistureLevel > maxMoisture) dsc.AppendLine(Lang.Get("wildfarming:tree-wet"));
-                else if (fl.Nutrients[0] < nutrientsConsumedOnGrowth[0] && fl.Nutrients[1] < nutrientsConsumedOnGrowth[1] && fl.Nutrients[2] < nutrientsConsumedOnGrowth[2])
-                    dsc.AppendLine(Lang.Get("wildfarming:tree-nogrow"));
             }
         }
 
@@ -337,7 +325,23 @@ namespace WildFarming
             return base.OnTesselation(mesher, tessThreadTesselator);
         }
 
+        public bool IsSuitableFor(Entity entity)
+        {
+            string[] diet = entity.Properties.Attributes?["blockDiet"]?.AsArray<string>();
+            if (diet == null) return false;
 
+            return diet.Contains("Wood");
+        }
 
+        public float ConsumeOnePortion()
+        {
+            if (0.05f > Api.World.Rand.NextDouble())
+            {
+                Api.World.BlockAccessor.BreakBlock(Pos, null);
+                return 1;
+            }
+
+            return 0.1f;
+        }
     }
 }

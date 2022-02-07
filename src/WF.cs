@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Linq;
 using System.Reflection;
 using Vintagestory.API.Common;
 using Vintagestory.ServerMods;
@@ -8,6 +9,10 @@ namespace WildFarming
     public class WildFarming : ModSystem
     {
         private Harmony harmony;
+        //Static references
+        public static string[] Conifers = new string[] { "pine", "baldcypress", "larch", "redwood", "greenspirecypress" };
+        public static string[] Decidious = new string[] { "birch", "oak", "maple", "ebony", "walnut", "crimsonkingmaple" };
+        public static string[] Tropical = new string[] { "kapok", "purpleheart" };
 
         public override void StartPre(ICoreAPI api)
         {
@@ -30,13 +35,14 @@ namespace WildFarming
             api.World.Config.SetBool("WFflowersEnabled", BotanyConfig.Loaded.FlowersEnabled);
             api.World.Config.SetBool("WFseedPanningEnabled", BotanyConfig.Loaded.SeedPanningEnabled);
             api.World.Config.SetBool("WFcropsEnabled", BotanyConfig.Loaded.CropSeedsEnabled);
-            api.World.Config.SetBool("WFbushesEnabled", BotanyConfig.Loaded.BushSeedsEnabled);
+            api.World.Config.SetBool("WFbushesEnabled", BotanyConfig.Loaded.BushSeedsEnabled && !api.ModLoader.IsModEnabled("wildcraft"));
             api.World.Config.SetBool("WFcactiEnabled", BotanyConfig.Loaded.CactiSeedsEnabled);
-            api.World.Config.SetBool("WFmushroomsEnabled", BotanyConfig.Loaded.MushroomSpawnEnabled);
+            api.World.Config.SetBool("WFmushroomsEnabled", BotanyConfig.Loaded.MushroomFarmingEnabled);
             api.World.Config.SetBool("WFvinesEnabled", BotanyConfig.Loaded.VineGrowthEnabled);
             api.World.Config.SetBool("WFlogScoringEnabled", BotanyConfig.Loaded.LogScoringEnabled);
             api.World.Config.SetBool("WFreedsEnabled", BotanyConfig.Loaded.ReedCloningEnabled);
             api.World.Config.SetBool("WFseaweedEnabled", BotanyConfig.Loaded.SeaweedGrowthEnabled);
+            api.World.Config.SetBool("WFtermitesEnabled", BotanyConfig.Loaded.TermitesEnabled);
 
         }
 
@@ -49,12 +55,16 @@ namespace WildFarming
             api.RegisterBlockClass("BlockEnhancedVines", typeof(BlockEnhancedVines));
             api.RegisterBlockClass("BlockTrunk", typeof(BlockTrunk));
             api.RegisterBlockClass("BlockLivingLogSection", typeof(BlockLivingLogSection));
+            api.RegisterBlockClass("BlockMushroomSubstrate", typeof(BlockMushroomSubstrate));
+            api.RegisterBlockClass("BlockEnhancedMushroom", typeof(BlockEnhancedMushroom));
 
             api.RegisterBlockEntityClass("WildPlant", typeof(WildPlantBlockEntity));
+            api.RegisterBlockEntityClass("MushroomSubstrate", typeof(BlockEntityMushroomSubstrate));
             api.RegisterBlockEntityClass("BEVines", typeof(BEVines));
             api.RegisterBlockEntityClass("BESeaweed", typeof(BESeaweed));
             api.RegisterBlockEntityClass("RegenSapling", typeof(BlockEntityRegenSapling));
             api.RegisterBlockEntityClass("TreeTrunk", typeof(BlockEntityTrunk));
+            api.RegisterBlockEntityClass("TermiteMound", typeof(BlockEntityTermiteMound));
 
             api.RegisterBlockBehaviorClass("Score", typeof(BlockBehaviorScore));
 
@@ -67,49 +77,14 @@ namespace WildFarming
             harmony.UnpatchAll(harmony.Id);
             base.Dispose();
         }
-    }
 
-    public class BotanyConfig
-    {
-        public static BotanyConfig Loaded { get; set; } = new BotanyConfig();
+        public static string GetTreeFamily(string tree)
+        {
+            if (Conifers.Contains(tree)) return "conifer";
+            if (Decidious.Contains(tree)) return "decidious";
+            if (Tropical.Contains(tree)) return "tropical";
 
-        //Tree settings
-        public int MaxTreeGrowthStages { get; set; } = 4;
-
-        public float SaplingToTreeSize { get; set; } = 0.6f;
-
-        public float TreeSizePerGrowthStage { get; set; } = 0.125f;
-
-        public float TreeRevertGrowthTempThreshold { get; set; } = 5f;
-
-        public float TreeRegenMultiplier { get; set; } = 1f;
-
-        //Wild Plants settings
-        public bool HarshWildPlants { get; set; } = true;
-
-        //Enable/Disable settings
-        public bool FlowersEnabled { get; set; } = true;
-
-        public bool SeedPanningEnabled { get; set; } = true;
-
-        public bool CropSeedsEnabled { get; set; } = true;
-
-        public bool BushSeedsEnabled { get; set; } = true;
-
-        public bool CactiSeedsEnabled { get; set; } = true;
-
-        public bool MushroomSpawnEnabled { get; set; } = true;
-
-        public bool VineGrowthEnabled { get; set; } = true;
-
-        public bool LogScoringEnabled { get; set; } = true;
-
-        public bool ReedCloningEnabled { get; set; } = true;
-
-        public bool LivingTreesEnabled { get; set; } = true;
-
-        public bool HarshSaplingsEnabled { get; set; } = true;
-
-        public bool SeaweedGrowthEnabled { get; set; } = true;
+            return null;
+        }
     }
 }
