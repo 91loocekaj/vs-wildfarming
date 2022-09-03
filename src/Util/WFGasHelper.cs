@@ -360,9 +360,9 @@ namespace WildFarming
 
                 Block parent = null;
                 IWorldChunk parentChunk = chunks[parentChunkVec];
-                if (!blocks.ContainsKey(parentChunk.Unpack_AndReadBlock(toLocalIndex(bpos.AsBlockPos)))) continue;
+                if (!blocks.ContainsKey(parentChunk.UnpackAndReadBlock(toLocalIndex(bpos.AsBlockPos), 0))) continue;
 
-                parent = blocks[parentChunk.Unpack_AndReadBlock(toLocalIndex(bpos.AsBlockPos))];
+                parent = blocks[parentChunk.UnpackAndReadBlock(toLocalIndex(bpos.AsBlockPos), 0)];
 
                 foreach (BlockFacing facing in faces)
                 {
@@ -378,7 +378,7 @@ namespace WildFarming
 
                     if (chunk == null) continue;
 
-                    int blockId = chunk.Unpack_AndReadBlock(toLocalIndex(curPos));
+                    int blockId = chunk.UnpackAndReadBlock(toLocalIndex(curPos), 0);
 
                     if (!blocks.TryGetValue(blockId, out atPos)) atPos = blocks[blockId] = blockAccessor.GetBlock(blockId);
 

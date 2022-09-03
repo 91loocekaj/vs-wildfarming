@@ -19,7 +19,7 @@ namespace WildFarming
         bool CanVineStay(IWorldAccessor world, BlockPos pos)
         {
             BlockPos apos = pos.AddCopy(VineFacing.Opposite);
-            Block block = world.BlockAccessor.GetBlock(world.BlockAccessor.GetBlockId(apos));
+            Block block = world.BlockAccessor.GetBlock(world.BlockAccessor.GetBlock(apos).Id);
 
             return block.CanAttachBlockAt(world.BlockAccessor, this, apos, VineFacing) || world.BlockAccessor.GetBlock(pos.UpCopy()) is BlockVines;
         }
