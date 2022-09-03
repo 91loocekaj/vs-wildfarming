@@ -4,7 +4,7 @@
   "name": "Wild Farming",
   "description" : "Cultivate flowers, herbs, mushrooms, and bushes!",
   "authors": ["jakecool19"],
-  "version": "1.2.0",
+  "version": "1.2.1",
   "dependencies": {
     "game": ""
   }

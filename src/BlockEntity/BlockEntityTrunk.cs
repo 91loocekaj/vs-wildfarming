@@ -469,7 +469,7 @@ namespace WildFarming
                 if (commited[i].Pos.Z > maxcz) maxcz = commited[i].Pos.Z;
                 if (commited[i].Pos.Z < mincz) mincz = commited[i].Pos.Z;
 
-                Block treeBlock = Api.World.GetBlock(commited[i].NewBlockId);
+                Block treeBlock = Api.World.GetBlock(commited[i].NewSolidId);
                 int localId = 0;
                 string dAp = treeBlock.Code.Domain + ":" + treeBlock.Code.Path;
 
@@ -739,10 +739,9 @@ namespace WildFarming
             if (Api.Side == EnumAppSide.Server) treeFinder?.RemovePOI(this);
         }
 
-        public bool IsSuitableFor(Entity entity)
+        public bool IsSuitableFor(Entity entity, string[] diet)
         {
             if (CurrentHealthyParts < 1) return false;
-            string[] diet = entity.Properties.Attributes?["blockDiet"]?.AsArray<string>();
             if (diet == null) return false;
 
             return diet.Contains("Wood");

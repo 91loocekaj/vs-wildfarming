@@ -325,9 +325,8 @@ namespace WildFarming
             return base.OnTesselation(mesher, tessThreadTesselator);
         }
 
-        public bool IsSuitableFor(Entity entity)
+        public  bool IsSuitableFor(Entity entity, string[] diet)
         {
-            string[] diet = entity.Properties.Attributes?["blockDiet"]?.AsArray<string>();
             if (diet == null) return false;
 
             return diet.Contains("Wood");
